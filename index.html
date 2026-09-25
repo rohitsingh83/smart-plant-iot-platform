@@ -558,6 +558,10 @@
         alerts: []
       };
 
+      // Expose globally for headless automation and testing
+      window.physicsTwin = physicsTwin;
+      window.currentConfig = currentConfig;
+
       const historyBuffer = {
         labels: [],
         moisture: [],
@@ -729,8 +733,10 @@
           created_at: new Date().toISOString()
         });
       }
+      window.triggerActuation = triggerActuation;
 
       function updateUI() {
+        window.updateUI = updateUI;
         const m = physicsTwin.soilMoisture;
         const t = physicsTwin.temperature;
         const h = physicsTwin.humidity;
