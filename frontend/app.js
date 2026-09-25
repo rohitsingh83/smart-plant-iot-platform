@@ -1,7 +1,7 @@
 /**
  * Apex Smart Plant Care - Single-Page Digital Twin Application
  * Handles real-time polling, Chart.js telemetry visualization, actuator commands, and alarm acknowledgement.
- * Supports dynamic Cloud Backend routing across Local, Render, and Vercel hosting.
+ * Supports dynamic Cloud Backend routing across Local, Render, Vercel, and Public Tunnel hosting.
  */
 
 let activeDeviceId = "esp32-greenhouse-01";
@@ -10,11 +10,26 @@ let pollTimer = null;
 let historyTimer = null;
 
 // Dynamic Cloud Gateway URL Resolution
-let apiBaseUrl = localStorage.getItem("PLANT_CARE_API_URL") || "";
+const PUBLIC_CLOUD_FALLBACK = "https://rude-steaks-tap.loca.lt";
+
+let apiBaseUrl = localStorage.getItem("PLANT_CARE_API_URL") || (
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? ""
+    : PUBLIC_CLOUD_FALLBACK
+);
 
 function getApiUrl(endpoint) {
   if (!apiBaseUrl) return endpoint;
   return `${apiBaseUrl.replace(/\/$/, '')}${endpoint}`;
+}
+
+async function cloudFetch(endpoint, options = {}) {
+  const url = getApiUrl(endpoint);
+  options.headers = {
+    ...(options.headers || {}),
+    "Bypass-Tunnel-Reminder": "true"
+  };
+  return fetch(url, options);
 }
 
 function updateApiBaseUrl(newUrl) {
@@ -95,7 +110,7 @@ function setupEventListeners() {
   if (btnConfigUrl) {
     btnConfigUrl.addEventListener("click", () => {
       const current = apiBaseUrl || "";
-      const entered = prompt("Enter Cloud Gateway Backend URL (e.g., https://smart-plant-backend.onrender.com or leave blank for local):", current);
+      const entered = prompt("Enter Cloud Gateway Backend URL (e.g., https://rude-steaks-tap.loca.lt or Render URL):", current);
       if (entered !== null) {
         updateApiBaseUrl(entered);
       }
@@ -171,7 +186,7 @@ function initChart() {
 
 async function loadDeviceList() {
   try {
-    const res = await fetch(getApiUrl("/api/v1/devices"));
+    const res = await cloudFetch("/api/v1/devices");
     if (!res.ok) return;
     const devices = await res.json();
     const select = document.getElementById("deviceSelect");
@@ -192,7 +207,7 @@ async function loadDeviceList() {
 
 async function fetchLatestState() {
   try {
-    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/latest`));
+    const res = await cloudFetch(`/api/v1/devices/${activeDeviceId}/latest`);
     if (!res.ok) return;
     const data = await res.json();
     updateDashboardUI(data);
@@ -330,7 +345,7 @@ function updateDashboardUI(data) {
 
 async function fetchHistory() {
   try {
-    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/history?hours=12`));
+    const res = await cloudFetch(`/api/v1/devices/${activeDeviceId}/history?hours=12`);
     if (!res.ok) return;
     const data = await res.json();
 
@@ -358,7 +373,7 @@ let topAlarmId = null;
 
 async function fetchAlerts() {
   try {
-    const res = await fetch(getApiUrl("/api/v1/alerts?unack_only=true&limit=20"));
+    const res = await cloudFetch("/api/v1/alerts?unack_only=true&limit=20");
     if (!res.ok) return;
     const alerts = await res.json();
 
@@ -426,7 +441,7 @@ async function ackTopAlarm() {
 
 async function ackAlert(alertId) {
   try {
-    const res = await fetch(getApiUrl(`/api/v1/alerts/${alertId}/ack`), { method: "PUT" });
+    const res = await cloudFetch(`/api/v1/alerts/${alertId}/ack`, { method: "PUT" });
     if (res.ok) {
       fetchAlerts();
     }
@@ -441,7 +456,7 @@ async function triggerManualIrrigation() {
   document.getElementById("btnManualActuateText").innerText = "Actuating Pump...";
 
   try {
-    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/actuate`), {
+    const res = await cloudFetch(`/api/v1/devices/${activeDeviceId}/actuate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ duration_seconds: 5.0, reason: "Manual operator pulse from Web Dashboard" })
@@ -467,7 +482,7 @@ async function saveDeviceConfig() {
   const maxM = parseFloat(document.getElementById("sliderMaxMoisture").value);
 
   try {
-    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/config`), {
+    const res = await cloudFetch(`/api/v1/devices/${activeDeviceId}/config`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
