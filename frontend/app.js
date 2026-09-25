@@ -1,12 +1,34 @@
 /**
  * Apex Smart Plant Care - Single-Page Digital Twin Application
  * Handles real-time polling, Chart.js telemetry visualization, actuator commands, and alarm acknowledgement.
+ * Supports dynamic Cloud Backend routing across Local, Render, and Vercel hosting.
  */
 
 let activeDeviceId = "esp32-greenhouse-01";
 let telemetryChart = null;
 let pollTimer = null;
 let historyTimer = null;
+
+// Dynamic Cloud Gateway URL Resolution
+let apiBaseUrl = localStorage.getItem("PLANT_CARE_API_URL") || "";
+
+function getApiUrl(endpoint) {
+  if (!apiBaseUrl) return endpoint;
+  return `${apiBaseUrl.replace(/\/$/, '')}${endpoint}`;
+}
+
+function updateApiBaseUrl(newUrl) {
+  apiBaseUrl = (newUrl || "").trim().replace(/\/$/, "");
+  localStorage.setItem("PLANT_CARE_API_URL", apiBaseUrl);
+  const display = document.getElementById("cloudUrlDisplay");
+  if (display) {
+    display.innerText = apiBaseUrl || "Same Origin / Direct";
+  }
+  loadDeviceList();
+  fetchLatestState();
+  fetchHistory();
+  fetchAlerts();
+}
 
 // Botanical Presets Mapping
 const BOTANICAL_PRESETS = {
@@ -23,6 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchLatestState();
   fetchHistory();
   fetchAlerts();
+
+  const display = document.getElementById("cloudUrlDisplay");
+  if (display) {
+    display.innerText = apiBaseUrl || "Same Origin / Direct";
+  }
 
   // Periodic polling
   pollTimer = setInterval(fetchLatestState, 2500);
@@ -63,6 +90,17 @@ function setupEventListeners() {
   document.getElementById("btnManualActuate").addEventListener("click", triggerManualIrrigation);
   document.getElementById("btnRefreshAlerts").addEventListener("click", fetchAlerts);
   document.getElementById("alarmBannerAckBtn").addEventListener("click", ackTopAlarm);
+
+  const btnConfigUrl = document.getElementById("btnConfigureCloudUrl");
+  if (btnConfigUrl) {
+    btnConfigUrl.addEventListener("click", () => {
+      const current = apiBaseUrl || "";
+      const entered = prompt("Enter Cloud Gateway Backend URL (e.g., https://smart-plant-backend.onrender.com or leave blank for local):", current);
+      if (entered !== null) {
+        updateApiBaseUrl(entered);
+      }
+    });
+  }
 }
 
 function initChart() {
@@ -133,7 +171,7 @@ function initChart() {
 
 async function loadDeviceList() {
   try {
-    const res = await fetch("/api/v1/devices");
+    const res = await fetch(getApiUrl("/api/v1/devices"));
     if (!res.ok) return;
     const devices = await res.json();
     const select = document.getElementById("deviceSelect");
@@ -154,7 +192,7 @@ async function loadDeviceList() {
 
 async function fetchLatestState() {
   try {
-    const res = await fetch(`/api/v1/devices/${activeDeviceId}/latest`);
+    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/latest`));
     if (!res.ok) return;
     const data = await res.json();
     updateDashboardUI(data);
@@ -292,7 +330,7 @@ function updateDashboardUI(data) {
 
 async function fetchHistory() {
   try {
-    const res = await fetch(`/api/v1/devices/${activeDeviceId}/history?hours=12`);
+    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/history?hours=12`));
     if (!res.ok) return;
     const data = await res.json();
 
@@ -320,7 +358,7 @@ let topAlarmId = null;
 
 async function fetchAlerts() {
   try {
-    const res = await fetch("/api/v1/alerts?unack_only=true&limit=20");
+    const res = await fetch(getApiUrl("/api/v1/alerts?unack_only=true&limit=20"));
     if (!res.ok) return;
     const alerts = await res.json();
 
@@ -388,7 +426,7 @@ async function ackTopAlarm() {
 
 async function ackAlert(alertId) {
   try {
-    const res = await fetch(`/api/v1/alerts/${alertId}/ack`, { method: "PUT" });
+    const res = await fetch(getApiUrl(`/api/v1/alerts/${alertId}/ack`), { method: "PUT" });
     if (res.ok) {
       fetchAlerts();
     }
@@ -403,7 +441,7 @@ async function triggerManualIrrigation() {
   document.getElementById("btnManualActuateText").innerText = "Actuating Pump...";
 
   try {
-    const res = await fetch(`/api/v1/devices/${activeDeviceId}/actuate`, {
+    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/actuate`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ duration_seconds: 5.0, reason: "Manual operator pulse from Web Dashboard" })
@@ -429,7 +467,7 @@ async function saveDeviceConfig() {
   const maxM = parseFloat(document.getElementById("sliderMaxMoisture").value);
 
   try {
-    const res = await fetch(`/api/v1/devices/${activeDeviceId}/config`, {
+    const res = await fetch(getApiUrl(`/api/v1/devices/${activeDeviceId}/config`), {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

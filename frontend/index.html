@@ -72,6 +72,11 @@
           </select>
         </div>
 
+        <button id="btnConfigureCloudUrl" title="Configure Cloud Gateway API URL for Vercel/Render integration" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition">
+          <span>☁️</span>
+          <span id="cloudUrlDisplay" class="max-w-[130px] truncate text-[11px] text-slate-400">Cloud API</span>
+        </button>
+
         <div id="connectionBadge" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-800 text-emerald-400 text-xs font-semibold">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
           <span id="connectionText">ONLINE</span>
