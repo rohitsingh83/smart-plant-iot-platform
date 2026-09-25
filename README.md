@@ -1,11 +1,21 @@
 # 🌿 Apex Smart Plant Care & Irrigation Platform (Virtual Digital Twin & SITL)
 
+[![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages%20%7C%20Vercel-success?style=for-the-badge&logo=vercel)](https://rohitsingh83.github.io/smart-plant-iot-platform/)
+[![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/deploy?repo=https://github.com/rohitsingh83/smart-plant-iot-platform)
+[![Database](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.14-3776AB.svg?logo=python&logoColor=white)](https://python.org)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0+-D71F00.svg?logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CI/CD](https://github.com/rohitsingh83/smart-plant-iot-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/rohitsingh83/smart-plant-iot-platform/actions/workflows/ci.yml)
+
+> **Live Production URLs:**
+> - 🌐 **Live Web Dashboard:** [https://rohitsingh83.github.io/smart-plant-iot-platform/](https://rohitsingh83.github.io/smart-plant-iot-platform/)
+> - 📦 **GitHub Repository:** [https://github.com/rohitsingh83/smart-plant-iot-platform](https://github.com/rohitsingh83/smart-plant-iot-platform)
+> - ⚡ **Render 1-Click Blueprint:** [Deploy on Render](https://render.com/deploy?repo=https://github.com/rohitsingh83/smart-plant-iot-platform)
+> - 🗄️ **Supabase Database:** Fully compatible with managed Supabase / Neon PostgreSQL URI connection strings.
 
 A production-grade, placement-ready Cloud Computing, IoT, and Cyber-Physical Systems engineering platform. Features a zero-hardware-mandate **Software-in-the-Loop (SITL)** differential physics simulator, time-series telemetry store, cryptographic edge authentication, dual-threshold hysteresis control laws, a dead-man's switch daemon, and a real-time web dashboard.
 
