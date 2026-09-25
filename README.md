@@ -9,6 +9,7 @@
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0+-D71F00.svg?logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED.svg?logo=docker&logoColor=white)](https://docker.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI/CD](https://github.com/rohitsingh83/smart-plant-iot-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/rohitsingh83/smart-plant-iot-platform/actions/workflows/ci.yml)
 
 > **Live Production URLs:**
 > - 🌐 **Live Web Dashboard:** [https://rohitsingh83.github.io/smart-plant-iot-platform/](https://rohitsingh83.github.io/smart-plant-iot-platform/)

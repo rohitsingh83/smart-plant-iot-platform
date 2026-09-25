@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Apex Smart Plant Care & Digital Twin Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Keyframe Animations */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+      50% { box-shadow: 0 0 35px rgba(6, 182, 212, 0.9), inset 0 0 20px rgba(6, 182, 212, 0.5); }
+    }
+    .glow-active {
+      animation: pulse-glow 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pump-water-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #06b6d4); }
+      50% { transform: scale(1.06); filter: drop-shadow(0 0 14px #22d3ee); }
+    }
+    .water-pulse {
+      animation: pump-water-pulse 1.2s infinite ease-in-out;
+    }
+
+    @keyframes plant-sway {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(2deg) translateY(-1px); }
+    }
+    .sway-gentle {
+      transform-origin: 100px 160px;
+      animation: plant-sway 3.5s infinite ease-in-out;
+    }
+
+    @keyframes leaf-left {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-4deg); }
+    }
+    .leaf-sway-l {
+      transform-origin: 98px 135px;
+      animation: leaf-left 3.2s infinite ease-in-out;
+    }
+
+    @keyframes leaf-right {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(4deg); }
+    }
+    .leaf-sway-r {
+      transform-origin: 101px 125px;
+      animation: leaf-right 2.9s infinite ease-in-out;
+    }
+
+    @keyframes droplet-fall {
+      0% { transform: translateY(-10px); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(42px); opacity: 0; }
+    }
+    .droplet {
+      animation: droplet-fall 0.75s infinite linear;
+    }
+    .droplet-delay-1 { animation-delay: 0.18s; }
+    .droplet-delay-2 { animation-delay: 0.36s; }
+    .droplet-delay-3 { animation-delay: 0.54s; }
+
+    @keyframes water-flow-dash {
+      to { stroke-dashoffset: -20; }
+    }
+    .pipe-flow {
+      stroke-dasharray: 4, 4;
+      animation: water-flow-dash 0.5s infinite linear;
+    }
+
+    @keyframes rotate-impeller {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-fast {
+      transform-origin: center;
+      animation: rotate-impeller 0.5s infinite linear;
+    }
+
+    @keyframes ripple-ring {
+      0% { r: 5; opacity: 0.8; }
+      100% { r: 28; opacity: 0; }
+    }
+    .ripple-circle {
+      animation: ripple-ring 1.4s infinite ease-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header & Status Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-4 sm:px-6 py-3.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-emerald-950/60 ring-1 ring-emerald-400/30">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            APEX PLANT CARE <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold tracking-wider">CYBER-PHYSICAL TWIN</span>
+          </h1>
+          <p class="text-[11px] text-slate-400">Autonomous Edge Ingestion &bull; Physics SITL &bull; Hysteresis Engine</p>
+        </div>
+      </div>
+
+      <!-- Controls & Gateway Switcher -->
+      <div class="flex items-center flex-wrap gap-2.5">
+        
+        <!-- Operating Mode Toggle -->
+        <div class="flex items-center bg-slate-800/90 rounded-lg p-1 border border-slate-700 text-xs">
+          <button id="btnModeSim" class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-600 text-white transition">
+            Autonomous Twin
+          </button>
+          <button id="btnModeCloud" class="px-2.5 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-white transition">
+            Cloud Gateway
+          </button>
+        </div>
+
+        <!-- Node Selector -->
+        <div class="hidden sm:flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1.5 rounded-lg border border-slate-700 text-xs">
+          <span class="text-slate-400">Node:</span>
+          <select id="deviceSelect" class="bg-transparent text-xs text-white focus:outline-none cursor-pointer">
+            <option value="esp32-greenhouse-01">esp32-greenhouse-01</option>
+          </select>
+        </div>
+
+        <!-- Cloud Endpoint Customizer -->
+        <button id="btnConfigureCloudUrl" title="Configure Cloud Gateway API URL" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition">
+          <span>☁️</span>
+          <span id="cloudUrlDisplay" class="max-w-[120px] truncate text-[11px] text-slate-400">Autonomous</span>
+        </button>
+
+        <!-- Status Liveness Badge -->
+        <div id="connectionBadge" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-700 text-emerald-400 text-xs font-semibold shadow-inner">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span id="connectionText">ONLINE</span>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 flex-grow space-y-6">
+
+    <!-- Active Alarm Banner -->
+    <div id="alarmBanner" class="hidden rounded-xl border border-red-800/60 bg-red-950/40 p-4 transition-all duration-300 backdrop-blur">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-red-900/50 rounded-lg text-red-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-red-200" id="alarmBannerTitle">Active Alarm Detected</h4>
+            <p class="text-xs text-red-300/80" id="alarmBannerMessage">Alert details loading...</p>
+          </div>
+        </div>
+        <button id="alarmBannerAckBtn" class="text-xs bg-red-800/80 hover:bg-red-700 text-red-100 px-3 py-1.5 rounded-lg border border-red-700 transition">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+
+    <!-- Animated Botanical Plant Twin & Actuator Stage -->
+    <div class="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 rounded-3xl p-6 backdrop-blur shadow-2xl relative overflow-hidden">
+      
+      <!-- Top Row: Stage Header & Environmental Ambiance -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4 mb-6">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>Cyber-Physical Plant Twin (SITL)</span>
+            <span id="plantStageSpeciesBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-normal">
+              Tropical Foliage
+            </span>
+          </h2>
+          <p class="text-xs text-slate-400">Real-time biological response to evapotranspiration and automated irrigation</p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="text-right">
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider block">Plant Health Index</span>
+            <span id="heroHealthText" class="text-lg font-mono font-extrabold text-emerald-400">100.0%</span>
+          </div>
+          <div class="w-12 h-12 rounded-full border-2 border-emerald-500/40 bg-emerald-950/40 flex items-center justify-center font-mono font-bold text-xs text-emerald-300" id="heroHealthRing">
+            100
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Animation Arena -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        
+        <!-- Left: Animated Botanical Visual SVG (4 cols) -->
+        <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-slate-950/60 rounded-2xl border border-slate-800/80 relative min-h-[260px]">
+          
+          <!-- Sun/Moon Day-Night Horizon Aura -->
+          <div id="skyAura" class="absolute top-3 right-3 flex items-center space-x-1.5 text-xs text-amber-300 bg-amber-950/40 border border-amber-800/40 px-2 py-1 rounded-full">
+            <span id="skyIcon">☀️</span>
+            <span id="skyTimeText" class="font-mono text-[10px]">10:30 AM</span>
+          </div>
+
+          <!-- SVG Plant Anatomy -->
+          <svg id="botanicalSvg" class="w-48 h-56 transition-all duration-700" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Soil Pot -->
+            <polygon points="55,160 145,160 135,225 65,225" fill="#334155" stroke="#475569" stroke-width="3" />
+            <ellipse cx="100" cy="160" rx="45" ry="10" fill="#1e293b" />
+            <!-- Soil Fill (Color changes with moisture) -->
+            <ellipse id="soilEllipse" cx="100" cy="162" rx="42" ry="8" fill="#2d1e12" />
+            
+            <!-- Water Ripples in Pot -->
+            <ellipse id="waterRipple" class="hidden ripple-circle" cx="100" cy="162" rx="10" ry="4" stroke="#38bdf8" stroke-width="2" fill="none" />
+
+            <!-- Irrigation Nozzle (Above Pot) -->
+            <g id="irrigationNozzle" class="transition-opacity duration-300">
+              <rect x="94" y="20" width="12" height="15" rx="3" fill="#64748b" />
+              <!-- Droplets Container (Animated when watering) -->
+              <g id="waterDroplets" class="hidden">
+                <circle class="droplet" cx="97" cy="45" r="2.5" fill="#38bdf8" />
+                <circle class="droplet droplet-delay-1" cx="103" cy="45" r="2.2" fill="#0ea5e9" />
+                <circle class="droplet droplet-delay-2" cx="95" cy="48" r="2.8" fill="#38bdf8" />
+                <circle class="droplet droplet-delay-3" cx="105" cy="48" r="2.4" fill="#0284c7" />
+              </g>
+            </g>
+
+            <!-- Plant Stem & Leaves (Sways with gentle wind) -->
+            <g id="plantGroup" class="sway-gentle">
+              <!-- Central Stem -->
+              <path id="plantStem" d="M100 160 Q 98 115 100 70" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+              
+              <!-- Left Lower Leaf -->
+              <path id="leafLeft1" class="leaf-sway-l" d="M98 135 C 70 135 60 115 50 120 C 65 140 85 145 98 138" fill="#10b981" stroke="#059669" stroke-width="1.5" />
+              
+              <!-- Right Lower Leaf -->
+              <path id="leafRight1" class="leaf-sway-r" d="M101 125 C 130 125 140 105 150 110 C 135 130 115 135 101 128" fill="#10b981" stroke="#059669" stroke-width="1.5" />
+
+              <!-- Left Upper Leaf -->
+              <path id="leafLeft2" class="leaf-sway-l" d="M99 100 C 75 95 70 75 60 80 C 75 100 90 105 99 102" fill="#34d399" stroke="#059669" stroke-width="1.5" />
+
+              <!-- Right Upper Leaf -->
+              <path id="leafRight2" class="leaf-sway-r" d="M101 92 C 125 87 130 67 140 72 C 125 92 110 97 101 94" fill="#34d399" stroke="#059669" stroke-width="1.5" />
+
+              <!-- Top Sprout / Bud -->
+              <path d="M100 70 C 90 55 100 40 100 40 C 100 40 110 55 100 70" fill="#6ee7b7" stroke="#059669" stroke-width="1.5" />
+            </g>
+          </svg>
+
+          <!-- Dynamic Botanical State Pill -->
+          <div id="plantMoodBadge" class="mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            🌱 Thriving & Hydrated
+          </div>
+        </div>
+
+        <!-- Middle: Virtual Submersible Actuator & Hydraulic Circuit (4 cols) -->
+        <div class="md:col-span-4 flex flex-col justify-between p-5 bg-slate-950/60 rounded-2xl border border-slate-800/80 min-h-[260px] space-y-4">
+          <div>
+            <span class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Actuator State Machine</span>
+            <div id="pumpWidgetBox" class="mt-2 rounded-xl border border-slate-800 bg-slate-900/70 p-4 text-center transition-all duration-300">
+              <div class="inline-flex p-3 rounded-2xl bg-slate-800/80 mb-2" id="pumpIconContainer">
+                <svg id="pumpImpellerIcon" class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <h3 class="text-sm font-bold text-white tracking-wide" id="pumpStatusTitle">VIRTUAL PUMP: IDLE</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5" id="pumpStatusSubtitle">Standing by for hysteresis trigger</p>
+
+              <!-- Active countdown indicator -->
+              <div id="pumpCountdownBox" class="hidden mt-2 text-xs font-mono text-cyan-300 bg-cyan-950/70 py-1 px-3 rounded-lg border border-cyan-700/80 inline-block">
+                Irrigating: <span id="pumpCountdownTimer">0.0s</span> remaining
+              </div>
+
+              <!-- Cooldown lockout indicator -->
+              <div id="cooldownBox" class="hidden mt-2 text-xs font-mono text-amber-300 bg-amber-950/60 py-1 px-3 rounded-lg border border-amber-700/80 inline-block">
+                Cooldown lockout: <span id="cooldownCountdownTimer">0s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hydraulic SVG Pipe Visualization -->
+          <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800 flex items-center justify-between text-xs">
+            <span class="text-slate-400 font-mono text-[11px]">Hydraulic Line:</span>
+            <div class="flex items-center space-x-2">
+              <svg class="w-24 h-4" viewBox="0 0 100 16">
+                <rect x="0" y="4" width="100" height="8" rx="4" fill="#1e293b" />
+                <line id="pipeWaterFlow" x1="5" y1="8" x2="95" y2="8" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" class="pipe-flow hidden" />
+              </svg>
+              <span id="pipeFlowText" class="text-[10px] font-mono text-slate-500">CLOSED</span>
+            </div>
+          </div>
+
+          <!-- Manual Trigger Button -->
+          <button id="btnManualActuate" class="w-full py-2.5 px-4 rounded-xl font-semibold text-xs bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 hover:from-emerald-500 hover:to-cyan-400 text-white shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+            <span id="btnManualActuateText">Manual Irrigation Pulse (5s)</span>
+          </button>
+        </div>
+
+        <!-- Right: Botanical Calibration Console (4 cols) -->
+        <div class="md:col-span-4 flex flex-col justify-between p-5 bg-slate-950/60 rounded-2xl border border-slate-800/80 min-h-[260px] space-y-3">
+          <div>
+            <span class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Species Calibration</span>
+            <select id="speciesProfileSelect" class="mt-2 w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="Tropical Foliage">Tropical Foliage (Monstera / Ficus)</option>
+              <option value="Succulents">Succulents & Cacti (Xerophytic)</option>
+              <option value="Vegetables/Tomatoes">Vegetables & Tomatoes</option>
+              <option value="Culinary Herbs">Culinary Herbs (Basil / Mint)</option>
+            </select>
+          </div>
+
+          <div class="space-y-2.5">
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1">
+                <span>Trigger Moisture (Min Threshold)</span>
+                <span id="sliderMinVal" class="font-mono text-emerald-400 font-bold">45%</span>
+              </div>
+              <input id="sliderMinMoisture" type="range" min="10" max="70" value="45" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1">
+                <span>Target Moisture (Saturation Cap)</span>
+                <span id="sliderMaxVal" class="font-mono text-emerald-400 font-bold">75%</span>
+              </div>
+              <input id="sliderMaxMoisture" type="range" min="30" max="95" value="75" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+            </div>
+          </div>
+
+          <button id="btnSaveConfig" class="w-full py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+            Apply Configuration to Node
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Live Telemetry KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      
+      <!-- Soil Moisture Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden backdrop-blur hover:border-slate-700 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Soil Moisture</span>
+          <span id="moistureBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">OPTIMAL</span>
+        </div>
+        <div class="mt-2.5 flex items-baseline space-x-1.5">
+          <span id="metricMoisture" class="text-3xl font-extrabold text-white">55.0</span>
+          <span class="text-slate-400 text-sm">%</span>
+        </div>
+        <div class="mt-2.5 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div id="moistureBar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full transition-all duration-500" style="width: 55%"></div>
+        </div>
+        <div class="mt-2 flex justify-between text-[10px] text-slate-500 font-mono">
+          <span>Min: <span id="labelMinThresh">45</span>%</span>
+          <span>Target: <span id="labelMaxThresh">75</span>%</span>
+        </div>
+      </div>
+
+      <!-- Temperature Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden backdrop-blur hover:border-slate-700 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Ambient Temp</span>
+          <span id="tempIcon" class="text-base">🌡️</span>
+        </div>
+        <div class="mt-2.5 flex items-baseline space-x-1.5">
+          <span id="metricTemp" class="text-3xl font-extrabold text-white">23.5</span>
+          <span class="text-slate-400 text-sm">°C</span>
+        </div>
+        <p class="mt-2 text-[11px] text-slate-400 truncate" id="tempStatus">Normal thermal range</p>
+      </div>
+
+      <!-- Relative Humidity Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden backdrop-blur hover:border-slate-700 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Humidity</span>
+          <span class="text-base">💧</span>
+        </div>
+        <div class="mt-2.5 flex items-baseline space-x-1.5">
+          <span id="metricHumidity" class="text-3xl font-extrabold text-white">60.0</span>
+          <span class="text-slate-400 text-sm">% RH</span>
+        </div>
+        <div class="mt-2.5 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div id="humidityBar" class="bg-cyan-500 h-1.5 rounded-full transition-all duration-500" style="width: 60%"></div>
+        </div>
+        <p class="mt-2 text-[10px] text-slate-500 font-mono">Atmospheric Vapor</p>
+      </div>
+
+      <!-- Solar Flux Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden backdrop-blur hover:border-slate-700 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Solar Flux</span>
+          <span id="sunIcon" class="text-base">☀️</span>
+        </div>
+        <div class="mt-2.5 flex items-baseline space-x-1.5">
+          <span id="metricLight" class="text-3xl font-extrabold text-white">4500</span>
+          <span class="text-slate-400 text-sm">Lux</span>
+        </div>
+        <p class="mt-2 text-[11px] text-slate-400 truncate" id="lightDescription">Diurnal daylight flux</p>
+      </div>
+
+      <!-- Reservoir Level Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden backdrop-blur hover:border-slate-700 transition">
+        <div class="flex justify-between items-start">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Water Tank</span>
+          <span id="tankBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">ADEQUATE</span>
+        </div>
+        <div class="mt-2.5 flex items-baseline space-x-1.5">
+          <span id="metricTank" class="text-3xl font-extrabold text-white">92.0</span>
+          <span class="text-slate-400 text-sm">%</span>
+        </div>
+        <div class="mt-2.5 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div id="tankBar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-500" style="width: 92%"></div>
+        </div>
+        <p class="mt-2 text-[10px] text-slate-500 font-mono">Cavitation limit: 10%</p>
+      </div>
+
+    </div>
+
+    <!-- Time-Series Analytical Chart (Chart.js) -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 backdrop-blur space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">Continuous Telemetry Streams & Irrigation Pulses</h3>
+          <p class="text-xs text-slate-400">Live dual-axis trends solved by the differential cyber-physical state model</p>
+        </div>
+        <div class="flex items-center space-x-3 text-xs">
+          <span class="inline-flex items-center text-emerald-400 space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span>Soil Moisture %</span>
+          </span>
+          <span class="inline-flex items-center text-amber-400 space-x-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <span>Temperature °C</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="relative w-full h-[300px]">
+        <canvas id="telemetryChart"></canvas>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500 font-mono">
+        <span id="syncModeIndicator">Continuous Real-Time Simulation Engine Active</span>
+        <span id="datapointsCount">Streaming live points</span>
+      </div>
+    </div>
+
+    <!-- Incident Audit & Alarm Log -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 backdrop-blur">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+            <span>Incident Audit & Alarm Center</span>
+            <span id="activeAlarmsBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold">0 active</span>
+          </h3>
+          <p class="text-xs text-slate-400">Deterministic fault detection, dead-man timeouts, and reservoir safeguards</p>
+        </div>
+        <button id="btnRefreshAlerts" class="text-xs text-slate-400 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 transition">
+          Refresh Log
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="text-slate-500 uppercase border-b border-slate-800 font-mono">
+            <tr>
+              <th class="py-2.5 px-3">Timestamp</th>
+              <th class="py-2.5 px-3">Severity</th>
+              <th class="py-2.5 px-3">Alarm Type</th>
+              <th class="py-2.5 px-3">Diagnostic Message</th>
+              <th class="py-2.5 px-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="alertsTableBody" class="divide-y divide-slate-800/50">
+            <tr>
+              <td colspan="5" class="py-6 text-center text-slate-500">No active operational alarms reported. System stable.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
+    Apex Smart Plant Care Platform &bull; Cyber-Physical Digital Twin &bull; 100% Standalone &amp; Cloud Ready
+  </footer>
+
+  <!-- Complete Inlined Self-Contained JavaScript Logic -->
+  <script>
+    (function() {
+      // Configuration & State
+      let activeMode = "autonomous";
+      let activeDeviceId = "esp32-greenhouse-01";
+      let telemetryChart = null;
+
+      const BOTANICAL_PRESETS = {
+        "Tropical Foliage": { min: 45, max: 75, pump: 5, cooldown: 25, speciesName: "Tropical Foliage" },
+        "Succulents": { min: 20, max: 35, pump: 4, cooldown: 60, speciesName: "Succulents & Cacti" },
+        "Vegetables/Tomatoes": { min: 40, max: 65, pump: 6, cooldown: 35, speciesName: "Tomatoes" },
+        "Culinary Herbs": { min: 35, max: 55, pump: 5, cooldown: 30, speciesName: "Culinary Herbs" }
+      };
+
+      let currentConfig = {
+        plantSpecies: "Tropical Foliage",
+        minMoisture: 45.0,
+        maxMoisture: 75.0,
+        pumpDuration: 5.0,
+        cooldownMinutes: 25.0
+      };
+
+      const physicsTwin = {
+        soilMoisture: 58.0,
+        temperature: 23.5,
+        humidity: 62.0,
+        lightLevel: 4500.0,
+        waterTankLevel: 94.0,
+        pumpActive: false,
+        pumpRemainingSec: 0.0,
+        cooldownRemainingSec: 0,
+        simTimeSec: 10.5 * 3600,
+        alerts: []
+      };
+
+      const historyBuffer = {
+        labels: [],
+        moisture: [],
+        temperature: []
+      };
+
+      let apiBaseUrl = localStorage.getItem("PLANT_CARE_API_URL") || "";
+
+      function initChart() {
+        if (!window.Chart) return;
+        const canvas = document.getElementById("telemetryChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        telemetryChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Soil Moisture (%)",
+                data: [],
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16, 185, 129, 0.12)",
+                fill: true,
+                tension: 0.35,
+                yAxisID: "yMoisture",
+                borderWidth: 2.5,
+                pointRadius: 2
+              },
+              {
+                label: "Temperature (°C)",
+                data: [],
+                borderColor: "#f59e0b",
+                backgroundColor: "transparent",
+                tension: 0.35,
+                yAxisID: "yTemp",
+                borderWidth: 2,
+                pointRadius: 1.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 300 },
+            interaction: { mode: "index", intersect: false },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: {
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+                ticks: { color: "#94a3b8", maxTicksLimit: 7, font: { size: 10 } }
+              },
+              yMoisture: {
+                type: "linear",
+                position: "left",
+                min: 0,
+                max: 100,
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+                ticks: { color: "#10b981", font: { size: 10 } }
+              },
+              yTemp: {
+                type: "linear",
+                position: "right",
+                min: 10,
+                max: 42,
+                grid: { drawOnChartArea: false },
+                ticks: { color: "#f59e0b", font: { size: 10 } }
+              }
+            }
+          }
+        });
+      }
+
+      function seedInitialHistory() {
+        const now = new Date();
+        for (let i = 18; i >= 0; i--) {
+          const t = new Date(now.getTime() - i * 15000);
+          const timeStr = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}`;
+          historyBuffer.labels.push(timeStr);
+          historyBuffer.moisture.push(Number((59.0 - i * 0.2 + Math.sin(i)).toFixed(1)));
+          historyBuffer.temperature.push(Number((23.0 + Math.sin(i * 0.5) * 1.5).toFixed(1)));
+        }
+        syncChartData();
+      }
+
+      function syncChartData() {
+        if (!telemetryChart) return;
+        telemetryChart.data.labels = [...historyBuffer.labels];
+        telemetryChart.data.datasets[0].data = [...historyBuffer.moisture];
+        telemetryChart.data.datasets[1].data = [...historyBuffer.temperature];
+        telemetryChart.update("none");
+      }
+
+      function tickSimulationEngine() {
+        if (activeMode === "cloud") {
+          fetchCloudTelemetry();
+          return;
+        }
+
+        const dt = 40.0;
+        physicsTwin.simTimeSec = (physicsTwin.simTimeSec + dt) % 86400;
+
+        const solarPhase = (physicsTwin.simTimeSec / 86400) * 2.0 * Math.PI;
+        const sunElevation = Math.sin(solarPhase - Math.PI / 2.0);
+
+        if (sunElevation > 0) {
+          physicsTwin.lightLevel = Math.max(100, Math.round(sunElevation * 58000 + (Math.random() * 200 - 100)));
+        } else {
+          physicsTwin.lightLevel = Math.max(10, Math.round(20 + Math.random() * 10));
+        }
+
+        const tempWave = Math.sin(solarPhase - Math.PI / 2.0 - 0.5);
+        physicsTwin.temperature = Number((21.5 + 8.0 * tempWave + (Math.random() * 0.2 - 0.1)).toFixed(1));
+
+        const normTemp = (physicsTwin.temperature - 13.0) / 20.0;
+        physicsTwin.humidity = Math.max(20, Math.min(95, Number((84.0 - normTemp * 42.0).toFixed(1))));
+
+        if (physicsTwin.cooldownRemainingSec > 0) {
+          physicsTwin.cooldownRemainingSec--;
+        }
+
+        if (physicsTwin.pumpActive && physicsTwin.pumpRemainingSec > 0) {
+          physicsTwin.soilMoisture = Math.min(currentConfig.maxMoisture + 8.0, physicsTwin.soilMoisture + 4.8);
+          physicsTwin.waterTankLevel = Math.max(0, physicsTwin.waterTankLevel - 0.8);
+          physicsTwin.pumpRemainingSec -= 1.0;
+
+          if (physicsTwin.pumpRemainingSec <= 0) {
+            physicsTwin.pumpActive = false;
+            physicsTwin.cooldownRemainingSec = Math.round(currentConfig.cooldownMinutes * 60);
+          }
+        } else {
+          physicsTwin.pumpActive = false;
+          const thermalFactor = Math.max(0.6, physicsTwin.temperature / 24.0);
+          const lightFactor = 1.0 + physicsTwin.lightLevel / 12000.0;
+          const evaporationDelta = 0.00075 * thermalFactor * lightFactor * dt;
+          physicsTwin.soilMoisture = Math.max(8.0, Number((physicsTwin.soilMoisture - evaporationDelta).toFixed(2)));
+
+          if (physicsTwin.soilMoisture <= currentConfig.minMoisture) {
+            if (physicsTwin.waterTankLevel >= 10.0 && physicsTwin.cooldownRemainingSec <= 0) {
+              triggerActuation(currentConfig.pumpDuration, "AUTOMATIC_HYSTERESIS");
+            }
+          }
+        }
+
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        historyBuffer.labels.push(timeStr);
+        historyBuffer.moisture.push(physicsTwin.soilMoisture);
+        historyBuffer.temperature.push(physicsTwin.temperature);
+
+        if (historyBuffer.labels.length > 25) {
+          historyBuffer.labels.shift();
+          historyBuffer.moisture.shift();
+          historyBuffer.temperature.shift();
+        }
+        syncChartData();
+        updateUI();
+      }
+
+      function triggerActuation(durationSec, triggerType) {
+        if (physicsTwin.cooldownRemainingSec > 0) return;
+        physicsTwin.pumpActive = true;
+        physicsTwin.pumpRemainingSec = durationSec;
+        physicsTwin.alerts.unshift({
+          id: "act-" + Date.now(),
+          severity: "INFO",
+          alert_type: triggerType,
+          message: `Pump engaged for ${durationSec.toFixed(1)}s (${triggerType}).`,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      function updateUI() {
+        const m = physicsTwin.soilMoisture;
+        const t = physicsTwin.temperature;
+        const h = physicsTwin.humidity;
+        const lux = physicsTwin.lightLevel;
+        const tank = physicsTwin.waterTankLevel;
+
+        const elMoisture = document.getElementById("metricMoisture");
+        if (elMoisture) elMoisture.innerText = m.toFixed(1);
+        const elMoistureBar = document.getElementById("moistureBar");
+        if (elMoistureBar) elMoistureBar.style.width = `${Math.min(100, Math.max(0, m))}%`;
+
+        const elTemp = document.getElementById("metricTemp");
+        if (elTemp) elTemp.innerText = t.toFixed(1);
+        const elTempIcon = document.getElementById("tempIcon");
+        if (elTempIcon) elTempIcon.innerText = t > 30 ? "🔥" : (t < 18 ? "❄️" : "🌡️");
+
+        const elHumidity = document.getElementById("metricHumidity");
+        if (elHumidity) elHumidity.innerText = h.toFixed(1);
+        const elHumidityBar = document.getElementById("humidityBar");
+        if (elHumidityBar) elHumidityBar.style.width = `${Math.min(100, Math.max(0, h))}%`;
+
+        const elLight = document.getElementById("metricLight");
+        if (elLight) elLight.innerText = Math.round(lux);
+        const elSunIcon = document.getElementById("sunIcon");
+        if (elSunIcon) elSunIcon.innerText = lux > 800 ? "☀️" : "🌙";
+
+        const elTank = document.getElementById("metricTank");
+        if (elTank) elTank.innerText = tank.toFixed(1);
+        const elTankBar = document.getElementById("tankBar");
+        if (elTankBar) elTankBar.style.width = `${Math.min(100, Math.max(0, tank))}%`;
+
+        const mBadge = document.getElementById("moistureBadge");
+        if (mBadge) {
+          if (m < currentConfig.minMoisture) {
+            mBadge.innerText = "DEFICIT (DRY)";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30";
+          } else if (m > currentConfig.maxMoisture) {
+            mBadge.innerText = "SATURATED";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30";
+          } else {
+            mBadge.innerText = "OPTIMAL";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+          }
+        }
+
+        const plantGroup = document.getElementById("plantGroup");
+        const soilEllipse = document.getElementById("soilEllipse");
+        const plantMoodBadge = document.getElementById("plantMoodBadge");
+        const waterDroplets = document.getElementById("waterDroplets");
+        const waterRipple = document.getElementById("waterRipple");
+
+        let health = 100.0;
+        if (m < currentConfig.minMoisture) health -= (currentConfig.minMoisture - m) * 2.2;
+        if (t > 34) health -= (t - 34) * 5.0;
+        if (tank < 15) health -= 20.0;
+        health = Math.max(0, Math.min(100, Math.round(health)));
+
+        const elHealthText = document.getElementById("heroHealthText");
+        if (elHealthText) elHealthText.innerText = `${health}.0%`;
+        const elHealthRing = document.getElementById("heroHealthRing");
+        if (elHealthRing) elHealthRing.innerText = health;
+
+        if (plantGroup && soilEllipse && plantMoodBadge) {
+          if (m < 28) {
+            plantGroup.style.transform = "scaleY(0.78) rotate(4deg)";
+            soilEllipse.setAttribute("fill", "#6b4a2e");
+            plantMoodBadge.innerText = "🥀 Desiccated (Watering Required)";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40";
+          } else if (physicsTwin.pumpActive) {
+            plantGroup.style.transform = "scaleY(1.04) rotate(-0.5deg)";
+            soilEllipse.setAttribute("fill", "#1c1108");
+            plantMoodBadge.innerText = "💧 Hydrating & Absorbing";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse";
+          } else {
+            plantGroup.style.transform = "scaleY(1.0) rotate(0deg)";
+            soilEllipse.setAttribute("fill", "#2d1e12");
+            plantMoodBadge.innerText = "🌱 Thriving & Hydrated";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+          }
+        }
+
+        const pumpBox = document.getElementById("pumpWidgetBox");
+        const pumpTitle = document.getElementById("pumpStatusTitle");
+        const pumpSub = document.getElementById("pumpStatusSubtitle");
+        const pumpImpeller = document.getElementById("pumpImpellerIcon");
+        const pumpCountdownBox = document.getElementById("pumpCountdownBox");
+        const cooldownBox = document.getElementById("cooldownBox");
+        const btnActuate = document.getElementById("btnManualActuate");
+        const pipeWaterFlow = document.getElementById("pipeWaterFlow");
+        const pipeFlowText = document.getElementById("pipeFlowText");
+
+        if (physicsTwin.pumpActive) {
+          if (pumpBox) pumpBox.className = "mt-2 rounded-xl border border-cyan-500 bg-cyan-950/50 p-4 text-center transition-all duration-300 glow-active";
+          if (pumpTitle) {
+            pumpTitle.innerText = "VIRTUAL PUMP: ACTIVE (WATERING)";
+            pumpTitle.className = "text-sm font-bold text-cyan-300 tracking-wide water-pulse";
+          }
+          if (pumpSub) pumpSub.innerText = "Irrigation solenoid energized";
+          if (pumpImpeller) {
+            pumpImpeller.classList.add("spin-fast", "text-cyan-400");
+            pumpImpeller.classList.remove("text-slate-400");
+          }
+          if (pipeWaterFlow) pipeWaterFlow.classList.remove("hidden");
+          if (pipeFlowText) {
+            pipeFlowText.innerText = "FLOWING";
+            pipeFlowText.className = "text-[10px] font-mono text-cyan-400 font-bold";
+          }
+          if (waterDroplets) waterDroplets.classList.remove("hidden");
+          if (waterRipple) waterRipple.classList.remove("hidden");
+          if (pumpCountdownBox) pumpCountdownBox.classList.remove("hidden");
+          const elCount = document.getElementById("pumpCountdownTimer");
+          if (elCount) elCount.innerText = `${physicsTwin.pumpRemainingSec.toFixed(1)}s`;
+          if (btnActuate) btnActuate.disabled = true;
+        } else {
+          if (pumpBox) pumpBox.className = "mt-2 rounded-xl border border-slate-800 bg-slate-900/70 p-4 text-center transition-all duration-300";
+          if (pumpTitle) {
+            pumpTitle.innerText = "VIRTUAL PUMP: IDLE";
+            pumpTitle.className = "text-sm font-bold text-white tracking-wide";
+          }
+          if (pumpSub) pumpSub.innerText = "Standing by for hysteresis trigger";
+          if (pumpImpeller) {
+            pumpImpeller.classList.remove("spin-fast", "text-cyan-400");
+            pumpImpeller.classList.add("text-slate-400");
+          }
+          if (pipeWaterFlow) pipeWaterFlow.classList.add("hidden");
+          if (pipeFlowText) {
+            pipeFlowText.innerText = "CLOSED";
+            pipeFlowText.className = "text-[10px] font-mono text-slate-500";
+          }
+          if (waterDroplets) waterDroplets.classList.add("hidden");
+          if (waterRipple) waterRipple.classList.add("hidden");
+          if (pumpCountdownBox) pumpCountdownBox.classList.add("hidden");
+
+          if (physicsTwin.cooldownRemainingSec > 0) {
+            if (cooldownBox) cooldownBox.classList.remove("hidden");
+            const elCd = document.getElementById("cooldownCountdownTimer");
+            if (elCd) elCd.innerText = `${physicsTwin.cooldownRemainingSec}s`;
+            if (btnActuate) {
+              btnActuate.disabled = true;
+              document.getElementById("btnManualActuateText").innerText = `Cooldown Lockout (${physicsTwin.cooldownRemainingSec}s)`;
+            }
+          } else {
+            if (cooldownBox) cooldownBox.classList.add("hidden");
+            if (btnActuate) {
+              btnActuate.disabled = false;
+              document.getElementById("btnManualActuateText").innerText = "Manual Irrigation Pulse (5s)";
+            }
+          }
+        }
+
+        const simHours = Math.floor(physicsTwin.simTimeSec / 3600);
+        const simMins = Math.floor((physicsTwin.simTimeSec % 3600) / 60);
+        const ampm = simHours >= 12 ? "PM" : "AM";
+        const displayHours = simHours % 12 || 12;
+        const elSkyTime = document.getElementById("skyTimeText");
+        if (elSkyTime) elSkyTime.innerText = `${displayHours}:${simMins.toString().padStart(2, '0')} ${ampm}`;
+        const elSkyIcon = document.getElementById("skyIcon");
+        if (elSkyIcon) elSkyIcon.innerText = (simHours >= 6 && simHours < 19) ? "☀️" : "🌙";
+
+        renderAlerts();
+      }
+
+      function renderAlerts() {
+        const tbody = document.getElementById("alertsTableBody");
+        const badge = document.getElementById("activeAlarmsBadge");
+        if (!tbody || !badge) return;
+        const alerts = physicsTwin.alerts.slice(0, 10);
+        badge.innerText = `${alerts.length} active`;
+
+        if (alerts.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">No active operational alarms reported. System stable.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        alerts.forEach(alert => {
+          const tr = document.createElement("tr");
+          const d = new Date(alert.created_at);
+          const timeStr = `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+          let sevClass = "bg-blue-500/20 text-blue-300 border-blue-500/30";
+          if (alert.severity === "CRITICAL") sevClass = "bg-red-500/20 text-red-300 border-red-500/30";
+          if (alert.severity === "WARNING") sevClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-mono text-slate-400">${timeStr}</td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${sevClass}">${alert.severity}</span></td>
+            <td class="py-2.5 px-3 font-semibold text-slate-200">${alert.alert_type}</td>
+            <td class="py-2.5 px-3 text-slate-300">${alert.message}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="window.dismissAlert('${alert.id}')" class="px-2 py-1 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                Acknowledge
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      window.dismissAlert = function(id) {
+        physicsTwin.alerts = physicsTwin.alerts.filter(a => a.id !== id);
+        renderAlerts();
+      };
+
+      function setupEventListeners() {
+        const btnModeSim = document.getElementById("btnModeSim");
+        const btnModeCloud = document.getElementById("btnModeCloud");
+        if (btnModeSim && btnModeCloud) {
+          btnModeSim.addEventListener("click", () => {
+            activeMode = "autonomous";
+            btnModeSim.className = "px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-600 text-white transition";
+            btnModeCloud.className = "px-2.5 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-white transition";
+            const ind = document.getElementById("syncModeIndicator");
+            if (ind) ind.innerText = "Continuous Real-Time Simulation Engine Active";
+            const conn = document.getElementById("connectionText");
+            if (conn) conn.innerText = "ONLINE";
+          });
+
+          btnModeCloud.addEventListener("click", () => {
+            activeMode = "cloud";
+            btnModeCloud.className = "px-2.5 py-1 rounded-md text-[11px] font-semibold bg-cyan-600 text-white transition";
+            btnModeSim.className = "px-2.5 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-white transition";
+            const ind = document.getElementById("syncModeIndicator");
+            if (ind) ind.innerText = "Cloud Gateway REST Polling Active";
+            fetchCloudTelemetry();
+          });
+        }
+
+        const btnActuate = document.getElementById("btnManualActuate");
+        if (btnActuate) {
+          btnActuate.addEventListener("click", () => {
+            triggerActuation(currentConfig.pumpDuration, "MANUAL_OVERRIDE");
+          });
+        }
+
+        const speciesSelect = document.getElementById("speciesProfileSelect");
+        if (speciesSelect) {
+          speciesSelect.addEventListener("change", (e) => {
+            const profile = BOTANICAL_PRESETS[e.target.value];
+            if (profile) {
+              currentConfig.plantSpecies = e.target.value;
+              currentConfig.minMoisture = profile.min;
+              currentConfig.maxMoisture = profile.max;
+              currentConfig.pumpDuration = profile.pump;
+              currentConfig.cooldownMinutes = profile.cooldown;
+
+              const sMin = document.getElementById("sliderMinMoisture");
+              if (sMin) sMin.value = profile.min;
+              const sMinVal = document.getElementById("sliderMinVal");
+              if (sMinVal) sMinVal.innerText = `${profile.min}%`;
+              const sMax = document.getElementById("sliderMaxMoisture");
+              if (sMax) sMax.value = profile.max;
+              const sMaxVal = document.getElementById("sliderMaxVal");
+              if (sMaxVal) sMaxVal.innerText = `${profile.max}%`;
+              const badge = document.getElementById("plantStageSpeciesBadge");
+              if (badge) badge.innerText = profile.speciesName;
+              const lMin = document.getElementById("labelMinThresh");
+              if (lMin) lMin.innerText = profile.min;
+              const lMax = document.getElementById("labelMaxThresh");
+              if (lMax) lMax.innerText = profile.max;
+            }
+          });
+        }
+
+        const sMin = document.getElementById("sliderMinMoisture");
+        if (sMin) {
+          sMin.addEventListener("input", (e) => {
+            currentConfig.minMoisture = parseFloat(e.target.value);
+            const val = document.getElementById("sliderMinVal");
+            if (val) val.innerText = `${e.target.value}%`;
+            const lMin = document.getElementById("labelMinThresh");
+            if (lMin) lMin.innerText = e.target.value;
+          });
+        }
+
+        const sMax = document.getElementById("sliderMaxMoisture");
+        if (sMax) {
+          sMax.addEventListener("input", (e) => {
+            currentConfig.maxMoisture = parseFloat(e.target.value);
+            const val = document.getElementById("sliderMaxVal");
+            if (val) val.innerText = `${e.target.value}%`;
+            const lMax = document.getElementById("labelMaxThresh");
+            if (lMax) lMax.innerText = e.target.value;
+          });
+        }
+
+        const btnSave = document.getElementById("btnSaveConfig");
+        if (btnSave) {
+          btnSave.addEventListener("click", () => {
+            alert(`Configuration saved: ${currentConfig.plantSpecies} [Min: ${currentConfig.minMoisture}%, Saturation: ${currentConfig.maxMoisture}%]`);
+          });
+        }
+
+        const btnConf = document.getElementById("btnConfigureCloudUrl");
+        if (btnConf) {
+          btnConf.addEventListener("click", () => {
+            const current = apiBaseUrl || "";
+            const entered = prompt("Enter Cloud Gateway Backend URL (e.g., https://smart-plant-backend.onrender.com or leave blank for Autonomous mode):", current);
+            if (entered !== null) {
+              apiBaseUrl = entered.trim().replace(/\/$/, "");
+              localStorage.setItem("PLANT_CARE_API_URL", apiBaseUrl);
+              const disp = document.getElementById("cloudUrlDisplay");
+              if (disp) disp.innerText = apiBaseUrl ? "Cloud API" : "Autonomous";
+            }
+          });
+        }
+      }
+
+      async function fetchCloudTelemetry() {
+        try {
+          const url = (apiBaseUrl || "") + `/api/v1/devices/${activeDeviceId}/latest`;
+          const res = await fetch(url, { headers: { "Bypass-Tunnel-Reminder": "true" } });
+          if (!res.ok) throw new Error("Offline");
+          const data = await res.json();
+          if (data.latest_telemetry) {
+            physicsTwin.soilMoisture = data.latest_telemetry.soil_moisture;
+            physicsTwin.temperature = data.latest_telemetry.temperature;
+            physicsTwin.humidity = data.latest_telemetry.humidity;
+            physicsTwin.lightLevel = data.latest_telemetry.light_level;
+            physicsTwin.waterTankLevel = data.latest_telemetry.water_tank_level;
+          }
+          if (data.device) {
+            physicsTwin.pumpActive = data.device.active_pump;
+            physicsTwin.cooldownRemainingSec = data.device.cooldown_remaining_seconds;
+          }
+          const conn = document.getElementById("connectionText");
+          if (conn) conn.innerText = "ONLINE (CLOUD)";
+          updateUI();
+        } catch (e) {
+          const conn = document.getElementById("connectionText");
+          if (conn) conn.innerText = "AUTONOMOUS";
+          activeMode = "autonomous";
+        }
+      }
+
+      // Start execution immediately
+      initChart();
+      setupEventListeners();
+      seedInitialHistory();
+      updateUI();
+      setInterval(tickSimulationEngine, 1000);
+    })();
+  </script>
+</body>
+</html>
