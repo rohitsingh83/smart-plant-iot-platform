@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-plant-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./plant_care.db
+      - REQUIRE_HMAC_AUTH=True
+      - DEFAULT_DEVICE_ID=esp32-greenhouse-01
+      - DEFAULT_API_KEY=plant-care-edge-token-2026-secure
+      - DEFAULT_HMAC_SECRET=hmac-secret-key-plant-guard-99228811
+      - HEARTBEAT_INTERVAL_SECONDS=10
+      - DEADMAN_TIMEOUT_MULTIPLIER=2.5
+      - MAX_PUMP_RUNTIME_SECONDS=8.0
+    volumes:
+      - plant_data:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-plant-sitl-simulator
+    command: ["python", "sensor_simulator/simulator.py"]
+    environment:
+      - SIMULATOR_BACKEND_URL=http://backend:8000
+      - DEVICE_ID=esp32-greenhouse-01
+      - DEVICE_API_KEY=plant-care-edge-token-2026-secure
+      - HMAC_SECRET=hmac-secret-key-plant-guard-99228811
+      - TIME_ACCELERATION=60.0
+      - NETWORK_DROPOUT_RATE=0.0
+      - REPORT_INTERVAL_SECONDS=3.0
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  plant_data:

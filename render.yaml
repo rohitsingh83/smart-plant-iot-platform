@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: smart-plant-backend
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        sync: false
+      - key: REQUIRE_HMAC_AUTH
+        value: "True"
+      - key: DEFAULT_DEVICE_ID
+        value: esp32-greenhouse-01
+      - key: DEFAULT_API_KEY
+        value: plant-care-edge-token-2026-secure
+      - key: DEFAULT_HMAC_SECRET
+        value: hmac-secret-key-plant-guard-99228811
+      - key: HEARTBEAT_INTERVAL_SECONDS
+        value: "10"
+      - key: DEADMAN_TIMEOUT_MULTIPLIER
+        value: "2.5"
+      - key: MAX_PUMP_RUNTIME_SECONDS
+        value: "8.0"
