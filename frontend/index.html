@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Apex Smart Plant Care & Digital Twin Platform</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,8 +33,8 @@
   <style>
     /* Keyframe Animations */
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.2); }
-      50% { box-shadow: 0 0 35px rgba(16, 185, 129, 0.9), inset 0 0 20px rgba(16, 185, 129, 0.5); }
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+      50% { box-shadow: 0 0 35px rgba(6, 182, 212, 0.9), inset 0 0 20px rgba(6, 182, 212, 0.5); }
     }
     .glow-active {
       animation: pulse-glow 1.8s infinite ease-in-out;
@@ -47,50 +50,50 @@
 
     @keyframes plant-sway {
       0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(1.8deg) translateY(-1px); }
+      50% { transform: rotate(2deg) translateY(-1px); }
     }
     .sway-gentle {
-      transform-origin: bottom center;
-      animation: plant-sway 4s infinite ease-in-out;
+      transform-origin: 100px 160px;
+      animation: plant-sway 3.5s infinite ease-in-out;
     }
 
     @keyframes leaf-left {
       0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(-3deg); }
+      50% { transform: rotate(-4deg); }
     }
     .leaf-sway-l {
-      transform-origin: 50% 100%;
-      animation: leaf-left 3.5s infinite ease-in-out;
+      transform-origin: 98px 135px;
+      animation: leaf-left 3.2s infinite ease-in-out;
     }
 
     @keyframes leaf-right {
       0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(3deg); }
+      50% { transform: rotate(4deg); }
     }
     .leaf-sway-r {
-      transform-origin: 50% 100%;
-      animation: leaf-right 3.2s infinite ease-in-out;
+      transform-origin: 101px 125px;
+      animation: leaf-right 2.9s infinite ease-in-out;
     }
 
     @keyframes droplet-fall {
-      0% { transform: translateY(-15px); opacity: 0; }
-      30% { opacity: 0.9; }
-      80% { opacity: 0.9; }
-      100% { transform: translateY(45px); opacity: 0; }
+      0% { transform: translateY(-10px); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(42px); opacity: 0; }
     }
     .droplet {
-      animation: droplet-fall 0.8s infinite linear;
+      animation: droplet-fall 0.75s infinite linear;
     }
-    .droplet-delay-1 { animation-delay: 0.15s; }
-    .droplet-delay-2 { animation-delay: 0.35s; }
-    .droplet-delay-3 { animation-delay: 0.55s; }
+    .droplet-delay-1 { animation-delay: 0.18s; }
+    .droplet-delay-2 { animation-delay: 0.36s; }
+    .droplet-delay-3 { animation-delay: 0.54s; }
 
     @keyframes water-flow-dash {
       to { stroke-dashoffset: -20; }
     }
     .pipe-flow {
       stroke-dasharray: 4, 4;
-      animation: water-flow-dash 0.6s infinite linear;
+      animation: water-flow-dash 0.5s infinite linear;
     }
 
     @keyframes rotate-impeller {
@@ -99,7 +102,7 @@
     }
     .spin-fast {
       transform-origin: center;
-      animation: rotate-impeller 0.6s infinite linear;
+      animation: rotate-impeller 0.5s infinite linear;
     }
 
     @keyframes ripple-ring {
@@ -107,16 +110,7 @@
       100% { r: 28; opacity: 0; }
     }
     .ripple-circle {
-      animation: ripple-ring 1.5s infinite ease-out;
-    }
-
-    @keyframes sun-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .sun-rays {
-      transform-origin: center;
-      animation: sun-spin 25s infinite linear;
+      animation: ripple-ring 1.4s infinite ease-out;
     }
   </style>
 </head>
@@ -236,7 +230,7 @@
           <!-- Sun/Moon Day-Night Horizon Aura -->
           <div id="skyAura" class="absolute top-3 right-3 flex items-center space-x-1.5 text-xs text-amber-300 bg-amber-950/40 border border-amber-800/40 px-2 py-1 rounded-full">
             <span id="skyIcon">☀️</span>
-            <span id="skyTimeText" class="font-mono text-[10px]">12:00 PM</span>
+            <span id="skyTimeText" class="font-mono text-[10px]">10:30 AM</span>
           </div>
 
           <!-- SVG Plant Anatomy -->
@@ -245,7 +239,7 @@
             <polygon points="55,160 145,160 135,225 65,225" fill="#334155" stroke="#475569" stroke-width="3" />
             <ellipse cx="100" cy="160" rx="45" ry="10" fill="#1e293b" />
             <!-- Soil Fill (Color changes with moisture) -->
-            <ellipse id="soilEllipse" cx="100" cy="162" rx="42" ry="8" fill="#3b2b1a" />
+            <ellipse id="soilEllipse" cx="100" cy="162" rx="42" ry="8" fill="#2d1e12" />
             
             <!-- Water Ripples in Pot -->
             <ellipse id="waterRipple" class="hidden ripple-circle" cx="100" cy="162" rx="10" ry="4" stroke="#38bdf8" stroke-width="2" fill="none" />
@@ -528,7 +522,556 @@
     Apex Smart Plant Care Platform &bull; Cyber-Physical Digital Twin &bull; 100% Standalone &amp; Cloud Ready
   </footer>
 
-  <!-- Application Logic -->
-  <script src="app.js"></script>
+  <!-- Complete Inlined Self-Contained JavaScript Logic -->
+  <script>
+    (function() {
+      // Configuration & State
+      let activeMode = "autonomous";
+      let activeDeviceId = "esp32-greenhouse-01";
+      let telemetryChart = null;
+
+      const BOTANICAL_PRESETS = {
+        "Tropical Foliage": { min: 45, max: 75, pump: 5, cooldown: 25, speciesName: "Tropical Foliage" },
+        "Succulents": { min: 20, max: 35, pump: 4, cooldown: 60, speciesName: "Succulents & Cacti" },
+        "Vegetables/Tomatoes": { min: 40, max: 65, pump: 6, cooldown: 35, speciesName: "Tomatoes" },
+        "Culinary Herbs": { min: 35, max: 55, pump: 5, cooldown: 30, speciesName: "Culinary Herbs" }
+      };
+
+      let currentConfig = {
+        plantSpecies: "Tropical Foliage",
+        minMoisture: 45.0,
+        maxMoisture: 75.0,
+        pumpDuration: 5.0,
+        cooldownMinutes: 25.0
+      };
+
+      const physicsTwin = {
+        soilMoisture: 58.0,
+        temperature: 23.5,
+        humidity: 62.0,
+        lightLevel: 4500.0,
+        waterTankLevel: 94.0,
+        pumpActive: false,
+        pumpRemainingSec: 0.0,
+        cooldownRemainingSec: 0,
+        simTimeSec: 10.5 * 3600,
+        alerts: []
+      };
+
+      const historyBuffer = {
+        labels: [],
+        moisture: [],
+        temperature: []
+      };
+
+      let apiBaseUrl = localStorage.getItem("PLANT_CARE_API_URL") || "";
+
+      function initChart() {
+        if (!window.Chart) return;
+        const canvas = document.getElementById("telemetryChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        telemetryChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Soil Moisture (%)",
+                data: [],
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16, 185, 129, 0.12)",
+                fill: true,
+                tension: 0.35,
+                yAxisID: "yMoisture",
+                borderWidth: 2.5,
+                pointRadius: 2
+              },
+              {
+                label: "Temperature (°C)",
+                data: [],
+                borderColor: "#f59e0b",
+                backgroundColor: "transparent",
+                tension: 0.35,
+                yAxisID: "yTemp",
+                borderWidth: 2,
+                pointRadius: 1.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 300 },
+            interaction: { mode: "index", intersect: false },
+            plugins: { legend: { display: false } },
+            scales: {
+              x: {
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+                ticks: { color: "#94a3b8", maxTicksLimit: 7, font: { size: 10 } }
+              },
+              yMoisture: {
+                type: "linear",
+                position: "left",
+                min: 0,
+                max: 100,
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+                ticks: { color: "#10b981", font: { size: 10 } }
+              },
+              yTemp: {
+                type: "linear",
+                position: "right",
+                min: 10,
+                max: 42,
+                grid: { drawOnChartArea: false },
+                ticks: { color: "#f59e0b", font: { size: 10 } }
+              }
+            }
+          }
+        });
+      }
+
+      function seedInitialHistory() {
+        const now = new Date();
+        for (let i = 18; i >= 0; i--) {
+          const t = new Date(now.getTime() - i * 15000);
+          const timeStr = `${t.getHours().toString().padStart(2, '0')}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}`;
+          historyBuffer.labels.push(timeStr);
+          historyBuffer.moisture.push(Number((59.0 - i * 0.2 + Math.sin(i)).toFixed(1)));
+          historyBuffer.temperature.push(Number((23.0 + Math.sin(i * 0.5) * 1.5).toFixed(1)));
+        }
+        syncChartData();
+      }
+
+      function syncChartData() {
+        if (!telemetryChart) return;
+        telemetryChart.data.labels = [...historyBuffer.labels];
+        telemetryChart.data.datasets[0].data = [...historyBuffer.moisture];
+        telemetryChart.data.datasets[1].data = [...historyBuffer.temperature];
+        telemetryChart.update("none");
+      }
+
+      function tickSimulationEngine() {
+        if (activeMode === "cloud") {
+          fetchCloudTelemetry();
+          return;
+        }
+
+        const dt = 40.0;
+        physicsTwin.simTimeSec = (physicsTwin.simTimeSec + dt) % 86400;
+
+        const solarPhase = (physicsTwin.simTimeSec / 86400) * 2.0 * Math.PI;
+        const sunElevation = Math.sin(solarPhase - Math.PI / 2.0);
+
+        if (sunElevation > 0) {
+          physicsTwin.lightLevel = Math.max(100, Math.round(sunElevation * 58000 + (Math.random() * 200 - 100)));
+        } else {
+          physicsTwin.lightLevel = Math.max(10, Math.round(20 + Math.random() * 10));
+        }
+
+        const tempWave = Math.sin(solarPhase - Math.PI / 2.0 - 0.5);
+        physicsTwin.temperature = Number((21.5 + 8.0 * tempWave + (Math.random() * 0.2 - 0.1)).toFixed(1));
+
+        const normTemp = (physicsTwin.temperature - 13.0) / 20.0;
+        physicsTwin.humidity = Math.max(20, Math.min(95, Number((84.0 - normTemp * 42.0).toFixed(1))));
+
+        if (physicsTwin.cooldownRemainingSec > 0) {
+          physicsTwin.cooldownRemainingSec--;
+        }
+
+        if (physicsTwin.pumpActive && physicsTwin.pumpRemainingSec > 0) {
+          physicsTwin.soilMoisture = Math.min(currentConfig.maxMoisture + 8.0, physicsTwin.soilMoisture + 4.8);
+          physicsTwin.waterTankLevel = Math.max(0, physicsTwin.waterTankLevel - 0.8);
+          physicsTwin.pumpRemainingSec -= 1.0;
+
+          if (physicsTwin.pumpRemainingSec <= 0) {
+            physicsTwin.pumpActive = false;
+            physicsTwin.cooldownRemainingSec = Math.round(currentConfig.cooldownMinutes * 60);
+          }
+        } else {
+          physicsTwin.pumpActive = false;
+          const thermalFactor = Math.max(0.6, physicsTwin.temperature / 24.0);
+          const lightFactor = 1.0 + physicsTwin.lightLevel / 12000.0;
+          const evaporationDelta = 0.00075 * thermalFactor * lightFactor * dt;
+          physicsTwin.soilMoisture = Math.max(8.0, Number((physicsTwin.soilMoisture - evaporationDelta).toFixed(2)));
+
+          if (physicsTwin.soilMoisture <= currentConfig.minMoisture) {
+            if (physicsTwin.waterTankLevel >= 10.0 && physicsTwin.cooldownRemainingSec <= 0) {
+              triggerActuation(currentConfig.pumpDuration, "AUTOMATIC_HYSTERESIS");
+            }
+          }
+        }
+
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        historyBuffer.labels.push(timeStr);
+        historyBuffer.moisture.push(physicsTwin.soilMoisture);
+        historyBuffer.temperature.push(physicsTwin.temperature);
+
+        if (historyBuffer.labels.length > 25) {
+          historyBuffer.labels.shift();
+          historyBuffer.moisture.shift();
+          historyBuffer.temperature.shift();
+        }
+        syncChartData();
+        updateUI();
+      }
+
+      function triggerActuation(durationSec, triggerType) {
+        if (physicsTwin.cooldownRemainingSec > 0) return;
+        physicsTwin.pumpActive = true;
+        physicsTwin.pumpRemainingSec = durationSec;
+        physicsTwin.alerts.unshift({
+          id: "act-" + Date.now(),
+          severity: "INFO",
+          alert_type: triggerType,
+          message: `Pump engaged for ${durationSec.toFixed(1)}s (${triggerType}).`,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      function updateUI() {
+        const m = physicsTwin.soilMoisture;
+        const t = physicsTwin.temperature;
+        const h = physicsTwin.humidity;
+        const lux = physicsTwin.lightLevel;
+        const tank = physicsTwin.waterTankLevel;
+
+        const elMoisture = document.getElementById("metricMoisture");
+        if (elMoisture) elMoisture.innerText = m.toFixed(1);
+        const elMoistureBar = document.getElementById("moistureBar");
+        if (elMoistureBar) elMoistureBar.style.width = `${Math.min(100, Math.max(0, m))}%`;
+
+        const elTemp = document.getElementById("metricTemp");
+        if (elTemp) elTemp.innerText = t.toFixed(1);
+        const elTempIcon = document.getElementById("tempIcon");
+        if (elTempIcon) elTempIcon.innerText = t > 30 ? "🔥" : (t < 18 ? "❄️" : "🌡️");
+
+        const elHumidity = document.getElementById("metricHumidity");
+        if (elHumidity) elHumidity.innerText = h.toFixed(1);
+        const elHumidityBar = document.getElementById("humidityBar");
+        if (elHumidityBar) elHumidityBar.style.width = `${Math.min(100, Math.max(0, h))}%`;
+
+        const elLight = document.getElementById("metricLight");
+        if (elLight) elLight.innerText = Math.round(lux);
+        const elSunIcon = document.getElementById("sunIcon");
+        if (elSunIcon) elSunIcon.innerText = lux > 800 ? "☀️" : "🌙";
+
+        const elTank = document.getElementById("metricTank");
+        if (elTank) elTank.innerText = tank.toFixed(1);
+        const elTankBar = document.getElementById("tankBar");
+        if (elTankBar) elTankBar.style.width = `${Math.min(100, Math.max(0, tank))}%`;
+
+        const mBadge = document.getElementById("moistureBadge");
+        if (mBadge) {
+          if (m < currentConfig.minMoisture) {
+            mBadge.innerText = "DEFICIT (DRY)";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30";
+          } else if (m > currentConfig.maxMoisture) {
+            mBadge.innerText = "SATURATED";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30";
+          } else {
+            mBadge.innerText = "OPTIMAL";
+            mBadge.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+          }
+        }
+
+        const plantGroup = document.getElementById("plantGroup");
+        const soilEllipse = document.getElementById("soilEllipse");
+        const plantMoodBadge = document.getElementById("plantMoodBadge");
+        const waterDroplets = document.getElementById("waterDroplets");
+        const waterRipple = document.getElementById("waterRipple");
+
+        let health = 100.0;
+        if (m < currentConfig.minMoisture) health -= (currentConfig.minMoisture - m) * 2.2;
+        if (t > 34) health -= (t - 34) * 5.0;
+        if (tank < 15) health -= 20.0;
+        health = Math.max(0, Math.min(100, Math.round(health)));
+
+        const elHealthText = document.getElementById("heroHealthText");
+        if (elHealthText) elHealthText.innerText = `${health}.0%`;
+        const elHealthRing = document.getElementById("heroHealthRing");
+        if (elHealthRing) elHealthRing.innerText = health;
+
+        if (plantGroup && soilEllipse && plantMoodBadge) {
+          if (m < 28) {
+            plantGroup.style.transform = "scaleY(0.78) rotate(4deg)";
+            soilEllipse.setAttribute("fill", "#6b4a2e");
+            plantMoodBadge.innerText = "🥀 Desiccated (Watering Required)";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40";
+          } else if (physicsTwin.pumpActive) {
+            plantGroup.style.transform = "scaleY(1.04) rotate(-0.5deg)";
+            soilEllipse.setAttribute("fill", "#1c1108");
+            plantMoodBadge.innerText = "💧 Hydrating & Absorbing";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse";
+          } else {
+            plantGroup.style.transform = "scaleY(1.0) rotate(0deg)";
+            soilEllipse.setAttribute("fill", "#2d1e12");
+            plantMoodBadge.innerText = "🌱 Thriving & Hydrated";
+            plantMoodBadge.className = "mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+          }
+        }
+
+        const pumpBox = document.getElementById("pumpWidgetBox");
+        const pumpTitle = document.getElementById("pumpStatusTitle");
+        const pumpSub = document.getElementById("pumpStatusSubtitle");
+        const pumpImpeller = document.getElementById("pumpImpellerIcon");
+        const pumpCountdownBox = document.getElementById("pumpCountdownBox");
+        const cooldownBox = document.getElementById("cooldownBox");
+        const btnActuate = document.getElementById("btnManualActuate");
+        const pipeWaterFlow = document.getElementById("pipeWaterFlow");
+        const pipeFlowText = document.getElementById("pipeFlowText");
+
+        if (physicsTwin.pumpActive) {
+          if (pumpBox) pumpBox.className = "mt-2 rounded-xl border border-cyan-500 bg-cyan-950/50 p-4 text-center transition-all duration-300 glow-active";
+          if (pumpTitle) {
+            pumpTitle.innerText = "VIRTUAL PUMP: ACTIVE (WATERING)";
+            pumpTitle.className = "text-sm font-bold text-cyan-300 tracking-wide water-pulse";
+          }
+          if (pumpSub) pumpSub.innerText = "Irrigation solenoid energized";
+          if (pumpImpeller) {
+            pumpImpeller.classList.add("spin-fast", "text-cyan-400");
+            pumpImpeller.classList.remove("text-slate-400");
+          }
+          if (pipeWaterFlow) pipeWaterFlow.classList.remove("hidden");
+          if (pipeFlowText) {
+            pipeFlowText.innerText = "FLOWING";
+            pipeFlowText.className = "text-[10px] font-mono text-cyan-400 font-bold";
+          }
+          if (waterDroplets) waterDroplets.classList.remove("hidden");
+          if (waterRipple) waterRipple.classList.remove("hidden");
+          if (pumpCountdownBox) pumpCountdownBox.classList.remove("hidden");
+          const elCount = document.getElementById("pumpCountdownTimer");
+          if (elCount) elCount.innerText = `${physicsTwin.pumpRemainingSec.toFixed(1)}s`;
+          if (btnActuate) btnActuate.disabled = true;
+        } else {
+          if (pumpBox) pumpBox.className = "mt-2 rounded-xl border border-slate-800 bg-slate-900/70 p-4 text-center transition-all duration-300";
+          if (pumpTitle) {
+            pumpTitle.innerText = "VIRTUAL PUMP: IDLE";
+            pumpTitle.className = "text-sm font-bold text-white tracking-wide";
+          }
+          if (pumpSub) pumpSub.innerText = "Standing by for hysteresis trigger";
+          if (pumpImpeller) {
+            pumpImpeller.classList.remove("spin-fast", "text-cyan-400");
+            pumpImpeller.classList.add("text-slate-400");
+          }
+          if (pipeWaterFlow) pipeWaterFlow.classList.add("hidden");
+          if (pipeFlowText) {
+            pipeFlowText.innerText = "CLOSED";
+            pipeFlowText.className = "text-[10px] font-mono text-slate-500";
+          }
+          if (waterDroplets) waterDroplets.classList.add("hidden");
+          if (waterRipple) waterRipple.classList.add("hidden");
+          if (pumpCountdownBox) pumpCountdownBox.classList.add("hidden");
+
+          if (physicsTwin.cooldownRemainingSec > 0) {
+            if (cooldownBox) cooldownBox.classList.remove("hidden");
+            const elCd = document.getElementById("cooldownCountdownTimer");
+            if (elCd) elCd.innerText = `${physicsTwin.cooldownRemainingSec}s`;
+            if (btnActuate) {
+              btnActuate.disabled = true;
+              document.getElementById("btnManualActuateText").innerText = `Cooldown Lockout (${physicsTwin.cooldownRemainingSec}s)`;
+            }
+          } else {
+            if (cooldownBox) cooldownBox.classList.add("hidden");
+            if (btnActuate) {
+              btnActuate.disabled = false;
+              document.getElementById("btnManualActuateText").innerText = "Manual Irrigation Pulse (5s)";
+            }
+          }
+        }
+
+        const simHours = Math.floor(physicsTwin.simTimeSec / 3600);
+        const simMins = Math.floor((physicsTwin.simTimeSec % 3600) / 60);
+        const ampm = simHours >= 12 ? "PM" : "AM";
+        const displayHours = simHours % 12 || 12;
+        const elSkyTime = document.getElementById("skyTimeText");
+        if (elSkyTime) elSkyTime.innerText = `${displayHours}:${simMins.toString().padStart(2, '0')} ${ampm}`;
+        const elSkyIcon = document.getElementById("skyIcon");
+        if (elSkyIcon) elSkyIcon.innerText = (simHours >= 6 && simHours < 19) ? "☀️" : "🌙";
+
+        renderAlerts();
+      }
+
+      function renderAlerts() {
+        const tbody = document.getElementById("alertsTableBody");
+        const badge = document.getElementById("activeAlarmsBadge");
+        if (!tbody || !badge) return;
+        const alerts = physicsTwin.alerts.slice(0, 10);
+        badge.innerText = `${alerts.length} active`;
+
+        if (alerts.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">No active operational alarms reported. System stable.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        alerts.forEach(alert => {
+          const tr = document.createElement("tr");
+          const d = new Date(alert.created_at);
+          const timeStr = `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+          let sevClass = "bg-blue-500/20 text-blue-300 border-blue-500/30";
+          if (alert.severity === "CRITICAL") sevClass = "bg-red-500/20 text-red-300 border-red-500/30";
+          if (alert.severity === "WARNING") sevClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-mono text-slate-400">${timeStr}</td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded border text-[10px] font-semibold ${sevClass}">${alert.severity}</span></td>
+            <td class="py-2.5 px-3 font-semibold text-slate-200">${alert.alert_type}</td>
+            <td class="py-2.5 px-3 text-slate-300">${alert.message}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button onclick="window.dismissAlert('${alert.id}')" class="px-2 py-1 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                Acknowledge
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      window.dismissAlert = function(id) {
+        physicsTwin.alerts = physicsTwin.alerts.filter(a => a.id !== id);
+        renderAlerts();
+      };
+
+      function setupEventListeners() {
+        const btnModeSim = document.getElementById("btnModeSim");
+        const btnModeCloud = document.getElementById("btnModeCloud");
+        if (btnModeSim && btnModeCloud) {
+          btnModeSim.addEventListener("click", () => {
+            activeMode = "autonomous";
+            btnModeSim.className = "px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-600 text-white transition";
+            btnModeCloud.className = "px-2.5 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-white transition";
+            const ind = document.getElementById("syncModeIndicator");
+            if (ind) ind.innerText = "Continuous Real-Time Simulation Engine Active";
+            const conn = document.getElementById("connectionText");
+            if (conn) conn.innerText = "ONLINE";
+          });
+
+          btnModeCloud.addEventListener("click", () => {
+            activeMode = "cloud";
+            btnModeCloud.className = "px-2.5 py-1 rounded-md text-[11px] font-semibold bg-cyan-600 text-white transition";
+            btnModeSim.className = "px-2.5 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-white transition";
+            const ind = document.getElementById("syncModeIndicator");
+            if (ind) ind.innerText = "Cloud Gateway REST Polling Active";
+            fetchCloudTelemetry();
+          });
+        }
+
+        const btnActuate = document.getElementById("btnManualActuate");
+        if (btnActuate) {
+          btnActuate.addEventListener("click", () => {
+            triggerActuation(currentConfig.pumpDuration, "MANUAL_OVERRIDE");
+          });
+        }
+
+        const speciesSelect = document.getElementById("speciesProfileSelect");
+        if (speciesSelect) {
+          speciesSelect.addEventListener("change", (e) => {
+            const profile = BOTANICAL_PRESETS[e.target.value];
+            if (profile) {
+              currentConfig.plantSpecies = e.target.value;
+              currentConfig.minMoisture = profile.min;
+              currentConfig.maxMoisture = profile.max;
+              currentConfig.pumpDuration = profile.pump;
+              currentConfig.cooldownMinutes = profile.cooldown;
+
+              const sMin = document.getElementById("sliderMinMoisture");
+              if (sMin) sMin.value = profile.min;
+              const sMinVal = document.getElementById("sliderMinVal");
+              if (sMinVal) sMinVal.innerText = `${profile.min}%`;
+              const sMax = document.getElementById("sliderMaxMoisture");
+              if (sMax) sMax.value = profile.max;
+              const sMaxVal = document.getElementById("sliderMaxVal");
+              if (sMaxVal) sMaxVal.innerText = `${profile.max}%`;
+              const badge = document.getElementById("plantStageSpeciesBadge");
+              if (badge) badge.innerText = profile.speciesName;
+              const lMin = document.getElementById("labelMinThresh");
+              if (lMin) lMin.innerText = profile.min;
+              const lMax = document.getElementById("labelMaxThresh");
+              if (lMax) lMax.innerText = profile.max;
+            }
+          });
+        }
+
+        const sMin = document.getElementById("sliderMinMoisture");
+        if (sMin) {
+          sMin.addEventListener("input", (e) => {
+            currentConfig.minMoisture = parseFloat(e.target.value);
+            const val = document.getElementById("sliderMinVal");
+            if (val) val.innerText = `${e.target.value}%`;
+            const lMin = document.getElementById("labelMinThresh");
+            if (lMin) lMin.innerText = e.target.value;
+          });
+        }
+
+        const sMax = document.getElementById("sliderMaxMoisture");
+        if (sMax) {
+          sMax.addEventListener("input", (e) => {
+            currentConfig.maxMoisture = parseFloat(e.target.value);
+            const val = document.getElementById("sliderMaxVal");
+            if (val) val.innerText = `${e.target.value}%`;
+            const lMax = document.getElementById("labelMaxThresh");
+            if (lMax) lMax.innerText = e.target.value;
+          });
+        }
+
+        const btnSave = document.getElementById("btnSaveConfig");
+        if (btnSave) {
+          btnSave.addEventListener("click", () => {
+            alert(`Configuration saved: ${currentConfig.plantSpecies} [Min: ${currentConfig.minMoisture}%, Saturation: ${currentConfig.maxMoisture}%]`);
+          });
+        }
+
+        const btnConf = document.getElementById("btnConfigureCloudUrl");
+        if (btnConf) {
+          btnConf.addEventListener("click", () => {
+            const current = apiBaseUrl || "";
+            const entered = prompt("Enter Cloud Gateway Backend URL (e.g., https://smart-plant-backend.onrender.com or leave blank for Autonomous mode):", current);
+            if (entered !== null) {
+              apiBaseUrl = entered.trim().replace(/\/$/, "");
+              localStorage.setItem("PLANT_CARE_API_URL", apiBaseUrl);
+              const disp = document.getElementById("cloudUrlDisplay");
+              if (disp) disp.innerText = apiBaseUrl ? "Cloud API" : "Autonomous";
+            }
+          });
+        }
+      }
+
+      async function fetchCloudTelemetry() {
+        try {
+          const url = (apiBaseUrl || "") + `/api/v1/devices/${activeDeviceId}/latest`;
+          const res = await fetch(url, { headers: { "Bypass-Tunnel-Reminder": "true" } });
+          if (!res.ok) throw new Error("Offline");
+          const data = await res.json();
+          if (data.latest_telemetry) {
+            physicsTwin.soilMoisture = data.latest_telemetry.soil_moisture;
+            physicsTwin.temperature = data.latest_telemetry.temperature;
+            physicsTwin.humidity = data.latest_telemetry.humidity;
+            physicsTwin.lightLevel = data.latest_telemetry.light_level;
+            physicsTwin.waterTankLevel = data.latest_telemetry.water_tank_level;
+          }
+          if (data.device) {
+            physicsTwin.pumpActive = data.device.active_pump;
+            physicsTwin.cooldownRemainingSec = data.device.cooldown_remaining_seconds;
+          }
+          const conn = document.getElementById("connectionText");
+          if (conn) conn.innerText = "ONLINE (CLOUD)";
+          updateUI();
+        } catch (e) {
+          const conn = document.getElementById("connectionText");
+          if (conn) conn.innerText = "AUTONOMOUS";
+          activeMode = "autonomous";
+        }
+      }
+
+      // Start execution immediately
+      initChart();
+      setupEventListeners();
+      seedInitialHistory();
+      updateUI();
+      setInterval(tickSimulationEngine, 1000);
+    })();
+  </script>
 </body>
 </html>
